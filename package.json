@@ -1,14 +1,12 @@
 {
-  "name": "react-share-button",
-  "version": "0.0.1",
+  "name": "chrome-web-share",
+  "version": "0.0.1-rc.0",
   "description": "A lightweight React Share Button for mobile web with web share api integration, native intent support and fallback",
-
   "main": "dist/index.js",
   "files": [
     "dist",
     "README"
   ],
-
   "scripts": {
     "prepublish": "npm run test && npm run build",
     "semantic-release": "semantic-release pre && npm publish && semantic-release post",
@@ -24,9 +22,11 @@
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/housinghq/react-mobile-share-btn"
+    "url": "https://github.com/martinwheeler/react-share-button"
   },
   "keywords": [
+    "chrome share",
+    "web api share",
     "react-social",
     "react-share",
     "whatsApp",
