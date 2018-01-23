@@ -1,6 +1,8 @@
+.storybook
 .DS_Store
 *.log
 src
-test
+tests
+stories
 examples
 coverage

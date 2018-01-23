@@ -1,12 +1,12 @@
 import React from 'react';
-import { storiesOf } from '@kadira/storybook';
-import { decorateAction } from '@kadira/storybook-addon-actions';
-import { withKnobs, boolean, number } from '@kadira/storybook-addon-knobs';
+import {storiesOf} from '@kadira/storybook';
+import {decorateAction} from '@kadira/storybook-addon-actions';
+import {withKnobs, boolean, number} from '@kadira/storybook-addon-knobs';
 
-import ShareBtn from '../components';
+import ShareBtn from '../src';
 
 const firstArg = decorateAction([
-  args => args.slice(0, 1)
+    args => args.slice(0, 1)
 ]);
 
 const stories = storiesOf('App', module)
@@ -16,11 +16,12 @@ const url = 'https://housing.com/in/buy/projects/page/7096-mangalam-heights-by-m
 stories.addDecorator(withKnobs)
 
 stories
-  .add('default', () => (
-    <ShareBtn
-          url={url}
-          text={text}
-          className='ib'
-          displayText='Share'
+    .add('default', () => (
+        <ShareBtn
+            disabled={['whatsApp']}
+            url={url}
+            text={text}
+            className='ib'
+            displayText='Share'
         />
-  ));
+    ));

@@ -1,7 +1,7 @@
 import { configure } from '@kadira/storybook';
 import { setOptions } from '@kadira/storybook-addon-options';
 
-import '../components/ShareBtn.scss'
+import '../src/ShareButton.scss'
 
 setOptions({
   name: 'React-mobile-share-btn',
