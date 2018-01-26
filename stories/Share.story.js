@@ -9,10 +9,10 @@ const firstArg = decorateAction([
     args => args.slice(0, 1)
 ]);
 
-const stories = storiesOf('App', module)
+const stories = storiesOf('App', module);
 
-const text = 'Take a look at this Property on Housing.com'
-const url = 'https://housing.com/in/buy/projects/page/7096-mangalam-heights-by-mangalam-developers-in-kharghar'
+const text = 'Take a look at this Property on Housing.com';
+const url = 'https://housing.com/in/buy/projects/page/7096-mangalam-heights-by-mangalam-developers-in-kharghar';
 stories.addDecorator(withKnobs)
 
 stories

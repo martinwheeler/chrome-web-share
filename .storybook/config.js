@@ -4,10 +4,10 @@ import { setOptions } from '@kadira/storybook-addon-options';
 import '../src/ShareButton.scss'
 
 setOptions({
-  name: 'React-mobile-share-btn',
-  url: 'https://github.com/housinghq/react-mobile-share-btn',
+  name: 'chrome-web-share',
+  url: 'https://github.com/martinwheeler/chrome-web-share',
   goFullScreen: false,
-  showLeftPanel: false,
+  showLeftPanel: true,
   showDownPanel: true,
   showSearchBox: false,
   downPanelInRight: false,

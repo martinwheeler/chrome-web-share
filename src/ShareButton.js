@@ -131,15 +131,18 @@ class ShareButton extends Component {
     }
 
     render() {
+        const { className } = this.props;
         return (
-            <div className={'share-btn'}>
-                <div onClick={this.toggleShare}>
-                    {this.props.displayText}
-                </div>
-                <div className={`share-modal ${this.state.shareModalOpen ? 'open' : ''}`}>
-                    <div className='overlay' onClick={this.toggleShare}/>
-                    <SharePopup {...this.props} toggleShare={this.toggleShare}
-                                shareModalOpen={this.state.shareModalOpen}/>
+            <div className={className}>
+                <div className={'share-btn'}>
+                    <div onClick={this.toggleShare}>
+                        {this.props.displayText}
+                    </div>
+                    <div className={`share-modal ${this.state.shareModalOpen ? 'open' : ''}`}>
+                        <div className='overlay' onClick={this.toggleShare}/>
+                        <SharePopup {...this.props} toggleShare={this.toggleShare}
+                                    shareModalOpen={this.state.shareModalOpen}/>
+                    </div>
                 </div>
             </div>
         )
