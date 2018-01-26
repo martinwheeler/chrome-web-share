@@ -1,24 +1,40 @@
+import Types from 'prop-types';
 import { autobind } from 'core-decorators';
-import React, { Component } from 'react';
+import React, { PureComponent } from 'react';
 import Visibility from './visibility';
-import * as DEFAULTS from './utils';
+import { DEFAULT_FUNCTION, DEFAULT_STRING, KEYCODE_ESCAPE} from './utils';
 
 @autobind
-class SharePopup extends Component {
+class PopupModal extends PureComponent {
+    static propTypes = {
+        modelOpen: Types.bool,
+        shareUrl: Types.string,
+        onCopySuccess: Types.func,
+        shareMessage: Types.string
+    };
+
+    static defaultProps = {
+        shareUrl: '',
+        shareMessage: '',
+        modelOpen: false
+    };
+
     constructor(props) {
         super(props);
     }
 
-    static copyClicked(e) {
+    copyClicked(e) {
+        const { onCopySuccess } = this.props;
         const copyTarget = document.querySelector(e.currentTarget.dataset.copytarget || null);
 
         if (copyTarget && copyTarget.select) {
             copyTarget.select();
 
-
             try {
                 document.execCommand('copy');
                 copyTarget.blur();
+
+                onCopySuccess(copyTarget.value);
             } catch (err) {
                 alert('Your device does not support copying, please copy manually.');
             }
@@ -42,131 +58,152 @@ class SharePopup extends Component {
         }, delay)
     }
 
-    fbClicked() {}
+    fbClicked() {
+    }
 
-    twitterClicked() {}
+    twitterClicked() {
+    }
 
-    gmailClicked() {}
+    gmailClicked() {
+    }
 
     render() {
-        const { disabled } = this.props;
-        const text = this.props.text + ' ' + this.props.url;
-        const gmailURL = `https://mail.google.com/mail/u/0/?view=cm&ui=2&tf=0&fs=1&su=${this.props.text}&body=Check out this awesome property %0A${this.props.url}`;
+        const { disabled, shareMessage, shareUrl } = this.props;
+        const formattedMessage = this.props.shareMessage + ' ' + this.props.shareUrl;
+        const gmailURL = `https://mail.google.com/mail/u/0/?view=cm&ui=2&tf=0&fs=1&su=${shareMessage}&body=Check out this awesome property %0A${shareUrl}`;
 
         return (
             <div className='share-popup'>
-                {this.props.shareModalOpen && <Visibility ref={(node) => {
+                {this.props.modelOpen && <Visibility ref={(node) => {
                     this.visibility = node
                 }}/>}
                 {!disabled.find(button => button === 'whatsApp') &&
-                    <a className='sp-tab' href={`whatsapp://send?text=${text}`} onClick={this.whatsappClicked}>
-                        <div className='icon whatsapp'/>
-                        <span className='text'>WhatsApp</span>
-                    </a>
+                <a className='sp-tab' href={`whatsapp://send?shareMessage=${formattedMessage}`} onClick={this.whatsappClicked}>
+                    <div className='icon whatsapp'/>
+                    <span className='shareMessage'>WhatsApp</span>
+                </a>
                 }
                 {!disabled.find(button => button === 'facebook') &&
-                    <a className='sp-tab'
-                       href={`http://www.facebook.com/sharer.php?u=${encodeURIComponent(this.props.url)}&p[title]=${encodeURIComponent(this.props.text)}`}
-                       onClick={this.fbClicked} target='_blank'>
-                        <div className='icon fb'/>
-                        <span className='text'>Facebook</span>
-                    </a>
+                <a className='sp-tab'
+                   href={`http://www.facebook.com/sharer.php?u=${encodeURIComponent(shareUrl)}&p[title]=${encodeURIComponent(shareMessage)}`}
+                   onClick={this.fbClicked} target='_blank'>
+                    <div className='icon fb'/>
+                    <span className='shareMessage'>Facebook</span>
+                </a>
                 }
                 {!disabled.find(button => button === 'twitter') &&
-                    <a className='sp-tab'
-                       href={`https://twitter.com/intent/tweet?text=${encodeURIComponent(this.props.text)}&url=${encodeURIComponent(this.props.url)}`}
-                       onClick={this.twitterClicked} target='_blank'>
-                        <div className='icon twitter'/>
-                        <span className='text'>Twitter</span>
-                    </a>
+                <a className='sp-tab'
+                   href={`https://twitter.com/intent/tweet?shareMessage=${encodeURIComponent(shareMessage)}&shareUrl=${encodeURIComponent(shareUrl)}`}
+                   onClick={this.twitterClicked} target='_blank'>
+                    <div className='icon twitter'/>
+                    <span className='shareMessage'>Twitter</span>
+                </a>
                 }
                 {!disabled.find(button => button === 'gmail') &&
-                    <a className='sp-tab' href={gmailURL} onClick={this.gmailClicked} target='_blank'>
-                        <div className='icon gmail'/>
-                        <span className='text'>Mail</span>
-                    </a>
+                <a className='sp-tab' href={gmailURL} onClick={this.gmailClicked} target='_blank'>
+                    <div className='icon gmail'/>
+                    <span className='shareMessage'>Mail</span>
+                </a>
                 }
                 {!disabled.find(button => button === 'copy') &&
-                    <div className='sp-tab copy' onClick={SharePopup.copyClicked} data-copytarget='#url'>
-                        <div className='copy-input'>
-                            <input type='text' id='url' defaultValue={this.props.url} readOnly/>
-                        </div>
-                        <div className='copy-button'>
-                            <div className='icon copy'/>
-                            <span className='text'>Copy to clipboard</span>
-                        </div>
+                <div className='sp-tab copy' onClick={this.copyClicked} data-copytarget='#shareUrl'>
+                    <div className='copy-input'>
+                        <input type='text' id='shareUrl' defaultValue={shareUrl} readOnly/>
                     </div>
+                    <div className='copy-button'>
+                        <div className='icon copy'/>
+                        <span className='shareMessage'>Copy to clipboard</span>
+                    </div>
+                </div>
                 }
             </div>
         )
     }
 }
 
-class ShareButton extends Component {
+@autobind
+class Button extends PureComponent {
+    static propTypes = {
+        shareUrl: Types.string,
+        shareMessage: Types.string,
+        buttonText: Types.string,
+        onButtonClick: Types.func,
+        onCopySuccess: Types.func
+    };
+
+    static defaultProps = {
+        shareUrl: DEFAULT_STRING,
+        shareMessage: DEFAULT_STRING,
+        buttonText: 'Share',
+        onButtonClick: DEFAULT_FUNCTION,
+        onCopySuccess: DEFAULT_FUNCTION
+    };
+
     constructor(props) {
         super(props);
 
         this.state = {
-            shareModalOpen: false
+            modelOpen: false
         };
 
-        this.toggleShare = this.toggleShare.bind(this)
+        if (props.shouldCloseOnEscape) {
+            document.addEventListener('keyup', (e) => {
+                if (e.keyCode === KEYCODE_ESCAPE) {
+                    this.setState({ modelOpen: false });
+                }
+            });
+        }
     }
 
     toggleShare() {
-        if (!this.state.shareModalOpen && this.props.onShareButtonClick) {
-            this.props.onShareButtonClick();
+        const { onButtonClick, shareMessage, shareUrl } = this.props;
+        const { modelOpen } = this.state;
+
+        if (!modelOpen && onButtonClick) {
+            onButtonClick();
         }
-        if (navigator && navigator.share !== undefined) {
+
+        if (navigator && !!navigator.share) {
             navigator.share({
-                title: this.props.text,
-                text: this.props.text + this.props.url,
-                url: this.props.url
-            }).then(() => console.log('Successful share'))
+                title: shareMessage,
+                text: shareMessage + shareUrl,
+                url: shareUrl
+            })
+                .then(() => console.log('Successful share'))
                 .catch(error => console.log('Error sharing:', error))
         } else {
-            document.body.style.overflow = !this.state.shareModalOpen ? 'hidden' : 'auto';
-            this.setState({shareModalOpen: !this.state.shareModalOpen});
+            document.body.style.overflow = !modelOpen ? 'hidden' : 'auto';
+            this.setState({ modelOpen: !modelOpen });
         }
     }
 
     render() {
-        const { className } = this.props;
+        const { className, buttonText, shouldCloseOnEscape, disabled, shareUrl, shareMessage, onCopySuccess } = this.props;
+        const { modelOpen } = this.state;
+
+        const popupProps = {
+            disabled,
+            shareUrl,
+            shareMessage,
+            onCopySuccess
+        };
+
         return (
             <div className={className}>
-                <div className={'share-btn'}>
-                    <div onClick={this.toggleShare}>
-                        {this.props.displayText}
-                    </div>
-                    <div className={`share-modal ${this.state.shareModalOpen ? 'open' : ''}`}>
-                        <div className='overlay' onClick={this.toggleShare}/>
-                        <SharePopup {...this.props} toggleShare={this.toggleShare}
-                                    shareModalOpen={this.state.shareModalOpen}/>
-                    </div>
+                <div className={'share-btn'} onClick={this.toggleShare}>
+                    {buttonText}
+                </div>
+                <div className={`share-modal ${modelOpen ? 'open' : ''}`}>
+                    <div className='overlay' onClick={this.toggleShare}/>
+                    <PopupModal
+                        {...popupProps}
+                        toggleShare={this.toggleShare}
+                        modelOpen={this.state.modelOpen}
+                    />
                 </div>
             </div>
         )
     }
 }
 
-ShareButton.propTypes = {
-    url: React.PropTypes.string,
-    text: React.PropTypes.string,
-    displayText: React.PropTypes.string,
-    onShareButtonClick: React.PropTypes.func
-};
-
-ShareButton.defaultProps = {
-    url: DEFAULTS.DEFAULT_STRING,
-    text: DEFAULTS.DEFAULT_STRING,
-    displayText: 'Share',
-    onShareButtonClick: DEFAULTS.DEFAULT_FUNCTION,
-};
-
-SharePopup.propTypes = {
-    url: React.PropTypes.string,
-    text: React.PropTypes.string,
-    shareModalOpen: React.PropTypes.bool,
-};
-
-export default ShareButton;
+export default Button;
