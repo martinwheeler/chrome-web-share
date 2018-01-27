@@ -10,13 +10,17 @@ class PopupModal extends PureComponent {
         modelOpen: Types.bool,
         shareUrl: Types.string,
         onCopySuccess: Types.func,
-        shareMessage: Types.string
+        shareMessage: Types.string,
+        fbAppId: Types.string,
+        fbDisplayType: Types.string
     };
 
     static defaultProps = {
         shareUrl: '',
         shareMessage: '',
-        modelOpen: false
+        modelOpen: false,
+        fbAppId: '',
+        fbDisplayType: 'touch'
     };
 
     constructor(props) {
@@ -68,9 +72,9 @@ class PopupModal extends PureComponent {
     }
 
     render() {
-        const { disabled, shareMessage, shareUrl } = this.props;
+        const { disabled, shareMessage, shareUrl, fbAppId, fbDisplayType } = this.props;
         const formattedMessage = this.props.shareMessage + ' ' + this.props.shareUrl;
-        const gmailURL = `https://mail.google.com/mail/u/0/?view=cm&ui=2&tf=0&fs=1&su=${shareMessage}&body=Check out this awesome property %0A${shareUrl}`;
+        const gmailURL = `https://mail.google.com/mail/u/0/?view=cm&ui=2&tf=0&fs=1&su=${shareMessage}&body=${shareUrl}`;
 
         return (
             <div className='share-popup'>
@@ -85,7 +89,7 @@ class PopupModal extends PureComponent {
                 }
                 {!disabled.find(button => button === 'facebook') &&
                 <a className='sp-tab'
-                   href={`http://www.facebook.com/sharer.php?u=${encodeURIComponent(shareUrl)}&p[title]=${encodeURIComponent(shareMessage)}`}
+                   href={`https://www.facebook.com/dialog/share?app_id=${fbAppId}&display=${fbDisplayType}&href=${encodeURIComponent(shareUrl)}`}
                    onClick={this.fbClicked} target='_blank'>
                     <div className='icon fb'/>
                     <span className='shareMessage'>Facebook</span>
@@ -128,15 +132,15 @@ class Button extends PureComponent {
         shareMessage: Types.string,
         buttonText: Types.string,
         onButtonClick: Types.func,
-        onCopySuccess: Types.func
+        onCopySuccess: Types.func,
+        fbAppId: Types.string.isRequired
     };
 
     static defaultProps = {
         shareUrl: DEFAULT_STRING,
         shareMessage: DEFAULT_STRING,
         buttonText: 'Share',
-        onButtonClick: DEFAULT_FUNCTION,
-        onCopySuccess: DEFAULT_FUNCTION
+        onButtonClick: DEFAULT_FUNCTION
     };
 
     constructor(props) {
@@ -178,14 +182,15 @@ class Button extends PureComponent {
     }
 
     render() {
-        const { className, buttonText, shouldCloseOnEscape, disabled, shareUrl, shareMessage, onCopySuccess } = this.props;
+        const { className, buttonText, shouldCloseOnEscape, disabled, shareUrl, shareMessage, onCopySuccess, fbAppId } = this.props;
         const { modelOpen } = this.state;
 
         const popupProps = {
             disabled,
             shareUrl,
             shareMessage,
-            onCopySuccess
+            onCopySuccess,
+            fbAppId
         };
 
         return (
