@@ -1,47 +1,41 @@
-# react-share-button
+# chrome-web-share
 
-> A lightweight React Share Button for mobile web with web share api integration, native intent support and fallback.
-
-<p align="center">
-  <span display="inline-block" margin-right="12"><img src="demo.gif" width="320" height="560"/></span>
-  <span display="inline-block"><img src="demo2.gif" width="320" height="560"/></span>
-</p>
+> A lightweight React share button for mobile web with [Web Share API](https://developers.google.com/web/updates/2016/09/navigator-share) integration, native intent support and modal fallback.
 
 ## Features
 
-1. [Web Share Api](https://developers.google.com/web/updates/2016/10/navigator-share) (on Origin Trials experiment until April 2017)
-1. Share Modal Fallback for other browsers
-1. Share via Whatsapp, FB, Twitter, Mail or Copy on Clipboard
+1. [Web Share API](https://developer.mozilla.org/en-US/docs/Web/API/Navigator/share#Browser_compatibility)
+1. Share Modal Fallback for browsers lacking support
+1. Share via Whatsapp, FB, Twitter, E-Mail or copy to clipboard
 
 ## Installation
 
 ```
-npm install --save react-share-button
+npm install chrome-web-share --save
+```
+
+```
+yarn add chrome-web-share
 ```
 
 ## Basic Usage
 
-To get web-share API on your origin just [request a token for your origin.](https://docs.google.com/forms/d/e/1FAIpQLSfO0_ptFl8r8G0UFhT0xhV17eabG-erUWBDiKSRDTqEZ_9ULQ/viewform_)
-You will get an email within 24 hrs with you key, then just add a meta tag
-```
-<meta http-equiv="origin-trial" content="**insert your token as provided in the the email here**">
-```
-Know more about [OriginTrials](https://github.com/jpchase/OriginTrials/blob/gh-pages/developer-guide.md)
-
-**JSX**:
-```js
-import ShareBtn from 'react-share-button';
+**JSX**
+```jsx
+import ShareBtn from 'chrome-web-share';
 
 <ShareBtn
-  url={url}
-  text={text}
-  className='ib'
-  displayText='Share'
+  shareUrl={url}
+  disabled={['whatsApp]]
+  shareText={text}
+  className='my-class-name'
+  buttonText='Share Profile'
 />
 ```
+
 **CSS**
 ```css
-@import "react-share-button/dist/ShareBtn"
+@import "chrome-web-share/dist/ShareBtn";
 ```
 
 ## Options
@@ -50,12 +44,25 @@ import ShareBtn from 'react-share-button';
 
 prop|default|description
 ----|-------|-----------
-className|''|Custom classnamem, you can style your button with this
-url|''|The URL you want to share
-text|''|The Text before the URL (E.g. Hey checkout this awesome property!!)
-displayText| Share |Any text you wanna write on button like Share Property
-onShareBtnClick| () => {} |A callback function when share button is clicked
+shouldCloseOnEscape|false|Whether or not the fallback modal should close when the user hits the escape key on desktop
+disabled|[]|An array of button names to be disabled
+className|''|Custom classname, you can style your button with this
+[fbAppId](https://developers.facebook.com/docs/apps/register)|''|Required if you are planning on sharing to Facebook
+shareUrl|''|The URL you want to share
+shareMessage|''|The Text before the URL (E.g. Hey checkout this awesome thing I'm sharing!!)
+buttonText| Share |The text that will appear for the share button
+onButtonClick| () => {} |A callback function when the share button gets clicked
+onCopySuccess| () => {} |A callback function that fires when the user has copied some text, also contains the text
 sharedBy| (medium) => {console.log('shared via ', medium)}|A callback function when user clicks on any share medium from share modal
+
+### Button Names
+> Used for disabling a button with the `disabled` prop.
+
+- whatsApp
+- facebook
+- twitter
+- gmail
+- copy
 
 ### Development
 ```
