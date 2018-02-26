@@ -1,6 +1,6 @@
 {
   "name": "chrome-web-share",
-  "version": "0.0.1-rc.7",
+  "version": "0.0.1-rc.8",
   "description": "A lightweight React Share Button for mobile web with web share api integration, native intent support and fallback",
   "main": "dist/index.js",
   "files": [
@@ -33,12 +33,12 @@
     "facebook",
     "react-mobile-share-btn"
   ],
-  "author": "Chetan Garg",
+  "author": "Martin Wheeler",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/housinghq/react-mobile-share-btn/issues"
+    "url": "https://github.com/martinwheeler/chrome-web-share/issues"
   },
-  "homepage": "https://github.com/housinghq/react-mobile-share-btn",
+  "homepage": "https://github.com/martinwheeler/chrome-web-share",
   "devDependencies": {
     "@kadira/storybook": "^2.24.0",
     "@kadira/storybook-addon-actions": "^1.1.1",

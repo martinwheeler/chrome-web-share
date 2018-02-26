@@ -26,7 +26,7 @@ import ShareBtn from 'chrome-web-share';
 
 <ShareBtn
   shareUrl={url}
-  disabled={['whatsApp]]
+  disabled={['whatsApp']]
   shareText={text}
   className='my-class-name'
   buttonText='Share Profile'
@@ -66,13 +66,13 @@ sharedBy| (medium) => {console.log('shared via ', medium)}|A callback function w
 
 ### Development
 ```
-git clone https://github.com/housinghq/react-share-button
-cd react-share-button
-npm install
-npm run storybook
+git clone https://github.com/martinwheeler/chrome-web-share
+cd chrome-web-share
+yarn install
+yarn storybook
 ```
 
-Open an issue before opening a PR. The UI in this package is for mobile only.
+Open an issue before opening a PR.
 
 ### License
-MIT @ Loconsolutions
+MIT
