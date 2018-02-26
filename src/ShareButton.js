@@ -97,7 +97,7 @@ class PopupModal extends PureComponent {
                 }
                 {!disabled.find(button => button === 'twitter') &&
                 <a className='sp-tab'
-                   href={`https://twitter.com/intent/tweet?shareMessage=${encodeURIComponent(shareMessage)}&shareUrl=${encodeURIComponent(shareUrl)}`}
+                   href={`https://twitter.com/intent/tweet?text=${encodeURIComponent(shareMessage)}&url=${encodeURIComponent(shareUrl)}`}
                    onClick={this.twitterClicked} target='_blank'>
                     <div className='icon twitter'/>
                     <span className='shareMessage'>Twitter</span>
