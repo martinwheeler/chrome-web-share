@@ -20,7 +20,8 @@ class PopupModal extends PureComponent {
         shareMessage: '',
         modelOpen: false,
         fbAppId: '',
-        fbDisplayType: 'touch'
+        fbDisplayType: 'touch',
+        onCopySuccess: () => {}
     };
 
     constructor(props) {
