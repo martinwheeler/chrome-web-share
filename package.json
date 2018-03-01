@@ -1,6 +1,6 @@
 {
   "name": "chrome-web-share",
-  "version": "0.0.1-rc.8",
+  "version": "1.0.0",
   "description": "A lightweight React Share Button for mobile web with web share api integration, native intent support and fallback",
   "main": "dist/index.js",
   "files": [
@@ -22,7 +22,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/martinwheeler/react-share-button"
+    "url": "https://github.com/martinwheeler/chrome-web-share"
   },
   "keywords": [
     "chrome share",
