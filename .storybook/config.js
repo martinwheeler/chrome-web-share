@@ -1,20 +1,9 @@
-import { configure } from '@kadira/storybook';
-import { setOptions } from '@kadira/storybook-addon-options';
+import { configure } from '@storybook/react';
 
-import '../src/ShareButton.scss'
-
-setOptions({
-  name: 'chrome-web-share',
-  url: 'https://github.com/martinwheeler/chrome-web-share',
-  goFullScreen: false,
-  showLeftPanel: true,
-  showDownPanel: true,
-  showSearchBox: false,
-  downPanelInRight: false,
-});
-
-function loadStories () {
-  require('../stories/Share.story.js');
+// automatically import all files ending in *.stories.js
+const req = require.context('../stories', true, /.stories.js$/);
+function loadStories() {
+  req.keys().forEach((filename) => req(filename));
 }
 
 configure(loadStories, module);
