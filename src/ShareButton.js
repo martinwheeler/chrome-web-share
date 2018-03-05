@@ -21,7 +21,8 @@ class PopupModal extends PureComponent {
         shareMessage: '',
         fbAppId: '',
         fbDisplayType: 'touch',
-        onCopySuccess: () => {}
+        onCopySuccess: () => {
+        }
     };
 
     get messageAndLink() {
@@ -54,7 +55,7 @@ class PopupModal extends PureComponent {
     /**
      * Helper function to open the App Store if the share does not trigger WhatsApp to launch.
      */
-    whatsappClicked() {
+    handleWhatsAppShare() {
         const userAgent = navigator.userAgent || navigator.vendor || window.opera;
         const delay = 1000;
         const start = new Date().getTime();
@@ -63,16 +64,14 @@ class PopupModal extends PureComponent {
             ? 'https://play.google.com/store/apps/details?id=com.whatsapp'
             : /iPad|iPhone|iPod/i.test(userAgent)
                 ? 'https://itunes.apple.com/app/id310633997'
-                : '';
+                : 'https://api.whatsapp.com/send?text=' + encodeURIComponent(this.messageAndLink);
 
         // Checks to see if whatsapp share launched otherwise lets show the user a donwload link for whatsapp
         setTimeout(() => {
-            if (link) {
-                let end = new Date().getTime();
-                if ((this.visibility && this.visibility.isHidden()) || (end - start >= delay * 2)) return;
+            let end = new Date().getTime();
+            if ((this.visibility && this.visibility.isHidden()) || (end - start >= delay * 2)) return;
 
-                window.open(link, '_blank');
-            }
+            window.open(link, '_blank');
         }, delay);
     }
 
@@ -107,7 +106,7 @@ class PopupModal extends PureComponent {
                 {this.props.modelOpen && <Visibility ref={this.setVisibilityRef}/>}
 
                 {!disabled.find(button => button === 'whatsApp') &&
-                <a className='sp-tab' href={`whatsapp://send?shareMessage=${this.messageAndLink}`}
+                <a className='sp-tab' href={`whatsapp://send?text=${encodeURIComponent(this.messageAndLink)}`}
                    onClick={this.handleWhatsAppShare}>
                     <div className='icon whatsapp'/>
                     <span className='shareMessage'>WhatsApp</span>
@@ -138,7 +137,7 @@ class PopupModal extends PureComponent {
                 {!disabled.find(button => button === 'copy') &&
                 <div className='sp-tab copy' onClick={this.handleCopyLink} data-copytarget='#shareUrl'>
                     <div className='copy-input'>
-                        <input type='text' id='shareUrl' defaultValue={shareUrl} readOnly/>
+                        <input type='text' id='shareUrl' value={shareUrl} readOnly/>
                     </div>
                     <div className='copy-button'>
                         <div className='icon copy'/>
