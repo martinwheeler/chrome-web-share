@@ -4,12 +4,69 @@ import { autobind } from 'core-decorators';
 import React, { PureComponent } from 'react';
 import Visibility from './visibility';
 import { DEFAULT_FUNCTION, DEFAULT_STRING, KEYCODE_ESCAPE, BUTTON_TYPES } from './utils';
+import { css } from 'glamor';
+
+const whatsAppSvg = require('./assets/whatsapp.svg');
+const messengerSvg = require('./assets/messenger.svg');
+const facebookSvg = require('./assets/facebook.svg');
+const twitterSvg = require('./assets/twitter.svg');
+const gmailSvg = require('./assets/gmail.svg');
+const copySvg = require('./assets/content_copy.svg');
+
+const iconContainer = css({
+    display: 'flex',
+    alignItems: 'center',
+    color: 'black',
+    lineHeight: '40px'
+});
+
+const copyButton = css({
+    cursor: 'pointer'
+});
+
+const iconStyles = {
+    width: '30px',
+    height: '30px',
+    paddingRight: '12px',
+    backgroundSize: 'contain',
+    backgroundRepeat: 'no-repeat'
+};
+
+const whatsAppIconStyles = css({
+    backgroundImage: `url(${whatsAppSvg})`,
+    ...iconStyles,
+});
+
+const smsIconStyles = css({
+    backgroundImage: `url(${messengerSvg})`,
+    ...iconStyles
+});
+
+const facebookIconStyles = css({
+    backgroundImage: `url(${facebookSvg})`,
+    ...iconStyles
+});
+
+const twitterIconStyles = css({
+    backgroundImage: `url(${twitterSvg})`,
+    ...iconStyles
+});
+
+const gmailIconStyles = css({
+    backgroundImage: `url(${gmailSvg})`,
+    ...iconStyles
+});
+
+const copyIconStyles = css({
+    backgroundImage: `url(${copySvg})`,
+    ...iconStyles
+});
 
 @autobind
-class PopupModal extends PureComponent {
+class Overlay extends PureComponent {
     static propTypes = {
         disabled: Types.array,
-        modelOpen: Types.bool,
+        overlayOpen: Types.bool,
         shareUrl: Types.string,
         shareMessage: Types.string,
         fbAppId: Types.string,
@@ -19,7 +76,7 @@ class PopupModal extends PureComponent {
 
     static defaultProps = {
         disabled: [],
-        modelOpen: false,
+        overlayOpen: false,
         shareUrl: '',
         shareMessage: '',
         fbAppId: '',
@@ -33,7 +90,7 @@ class PopupModal extends PureComponent {
         return `${shareMessage} ${shareUrl}`;
     }
 
-    isShareDisabled (type) {
+    isShareDisabled(type) {
         const { disabled } = this.props;
         return disabled && _.includes(disabled, type);
     }
@@ -107,37 +164,44 @@ class PopupModal extends PureComponent {
         const gmailLink = `https://mail.google.com/mail/u/0/?view=cm&ui=2&tf=0&fs=1&su=${shareMessage}&body=${shareUrl}`;
         const twitterLink = `https://twitter.com/intent/tweet?text=${encodeURIComponent(shareMessage)}&url=${encodeURIComponent(shareUrl)}`;
         const facebookLink = `https://www.facebook.com/dialog/share?app_id=${fbAppId}&display=${fbDisplayType}&href=${encodeURIComponent(shareUrl)}`;
+        const smsLink = `sms:?body=${encodeURIComponent(this.messageAndLink)}`;
 
         return (
             <div className='share-popup'>
-                {this.props.modelOpen && <Visibility ref={this.setVisibilityRef}/>}
+                {this.props.overlayOpen && <Visibility ref={this.setVisibilityRef}/>}
 
                 {!this.isShareDisabled(BUTTON_TYPES.WHATSAPP) &&
-                    <a className='sp-tab' href={`whatsapp://send?text=${encodeURIComponent(this.messageAndLink)}`}
-                       onClick={this.handleWhatsAppShare}>
-                        <div className='icon whatsapp'/>
-                        <span className='shareMessage'>WhatsApp</span>
-                    </a>
+                <a {...iconContainer} href={`whatsapp://send?text=${encodeURIComponent(this.messageAndLink)}`}
+                   onClick={this.handleWhatsAppShare}>
+                    <span {...whatsAppIconStyles} />
+                    <span className='shareMessage'>WhatsApp</span>
+                </a>
+                }
+                {!this.isShareDisabled(BUTTON_TYPES.SMS) &&
+                <a href={smsLink} target='_blank' {...iconContainer}>
+                    <span {...smsIconStyles} />
+                    <span className='shareMessage'>SMS</span>
+                </a>
                 }
                 {!this.isShareDisabled(BUTTON_TYPES.FACEBOOK) &&
-                <a className='sp-tab'
+                <a {...iconContainer}
                    href={facebookLink}
                    onClick={this.handleFacebookShare} target='_blank'>
-                    <div className='icon fb'/>
+                    <span {...facebookIconStyles}/>
                     <span className='shareMessage'>Facebook</span>
                 </a>
                 }
                 {!this.isShareDisabled(BUTTON_TYPES.TWITTER) &&
-                <a className='sp-tab'
+                <a {...iconContainer}
                    href={twitterLink}
                    onClick={this.handleTwitterShare} target='_blank'>
-                    <div className='icon twitter'/>
+                    <span {...twitterIconStyles}/>
                     <span className='shareMessage'>Twitter</span>
                 </a>
                 }
                 {!this.isShareDisabled(BUTTON_TYPES.GMAIL) &&
-                <a className='sp-tab' href={gmailLink} onClick={this.handleEmailShare} target='_blank'>
-                    <div className='icon gmail'/>
+                <a {...iconContainer} href={gmailLink} onClick={this.handleEmailShare} target='_blank'>
+                    <span {...gmailIconStyles}/>
                     <span className='shareMessage'>Mail</span>
                 </a>
                 }
@@ -146,8 +210,8 @@ class PopupModal extends PureComponent {
                     <div className='copy-input'>
                         <input type='text' id='shareUrl' value={shareUrl} readOnly/>
                     </div>
-                    <div className='copy-button'>
-                        <div className='icon copy'/>
+                    <div {...css(iconContainer, copyButton)}>
+                        <span {...copyIconStyles}/>
                         <span className='shareMessage'>Copy to clipboard</span>
                     </div>
                 </div>
@@ -156,6 +220,10 @@ class PopupModal extends PureComponent {
         )
     }
 }
+
+const shareButton = css({
+   cursor: 'pointer'
+});
 
 @autobind
 class Button extends PureComponent {
@@ -179,27 +247,27 @@ class Button extends PureComponent {
         super(props);
 
         this.state = {
-            modelOpen: false
+            overlayOpen: false
         };
 
         if (props.shouldCloseOnEscape) {
             document.addEventListener('keyup', (e) => {
                 if (e.keyCode === KEYCODE_ESCAPE) {
-                    this.setState({ modelOpen: false });
+                    this.setState({ overlayOpen: false });
                 }
             });
         }
     }
 
     toggleShare() {
-        const { onButtonClick, shareMessage, shareUrl } = this.props;
-        const { modelOpen } = this.state;
+        const { onButtonClick, shareMessage, shareUrl, isOpen } = this.props;
+        const { overlayOpen } = this.state;
 
-        if (!modelOpen && onButtonClick) {
+        if (!overlayOpen && onButtonClick) {
             onButtonClick();
         }
 
-        if (navigator && !!navigator.share) {
+        if (navigator && navigator.share) {
             navigator.share({
                 title: shareMessage,
                 text: shareMessage + shareUrl,
@@ -208,16 +276,28 @@ class Button extends PureComponent {
                 .then(() => console.log('Successful share'))
                 .catch(error => console.log('Error sharing:', error))
         } else {
-            document.body.style.overflow = !modelOpen ? 'hidden' : 'auto';
-            this.setState({ modelOpen: !modelOpen });
+            if (!isOpen) {
+                document.body.style.overflow = !overlayOpen ? 'hidden' : 'auto';
+                this.setState({ overlayOpen: !overlayOpen });
+            }
         }
     }
 
     render() {
-        const { className, buttonText, shouldCloseOnEscape, disabled, shareUrl, shareMessage, onCopySuccess, fbAppId } = this.props;
-        const { modelOpen } = this.state;
+        const {
+            className,
+            buttonText,
+            shouldCloseOnEscape,
+            disabled,
+            shareUrl,
+            shareMessage,
+            onCopySuccess,
+            fbAppId,
+            isOpen
+        } = this.props;
+        const { overlayOpen } = this.state;
 
-        const popupProps = {
+        const overlayProps = {
             disabled,
             shareUrl,
             shareMessage,
@@ -227,15 +307,15 @@ class Button extends PureComponent {
 
         return (
             <div className={className}>
-                <div className={'share-btn'} onClick={this.toggleShare}>
+                <div {...shareButton} onClick={this.toggleShare}>
                     {buttonText}
                 </div>
-                <div className={`share-modal ${modelOpen ? 'open' : ''}`}>
+                <div className={`share-modal ${overlayOpen || isOpen ? 'open' : ''}`}>
                     <div className='overlay' onClick={this.toggleShare}/>
-                    <PopupModal
-                        {...popupProps}
+                    <Overlay
+                        {...overlayProps}
                         toggleShare={this.toggleShare}
-                        modelOpen={this.state.modelOpen}
+                        overlayOpen={this.state.overlayOpen}
                     />
                 </div>
             </div>

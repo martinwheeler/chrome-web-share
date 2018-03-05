@@ -1,7 +1,7 @@
 import React from 'react';
 
 import { storiesOf } from '@storybook/react';
-import { withKnobs, array, text } from '@storybook/addon-knobs/react';
+import { withKnobs, array, text, boolean } from '@storybook/addon-knobs/react';
 
 import ShareBtn from '../src';
 import { BUTTON_TYPES } from '../src/utils';
@@ -14,10 +14,11 @@ stories.addDecorator(withKnobs);
 stories
     .add('default', () => {
         const knobProps = {
-            disabled: array('disabled', [ BUTTON_TYPES.WHATSAPP ]),
+            isOpen: boolean('is Open', true),
+            disabled: array('disabled', []),
             fbAppId: text('FB App ID', ''),
             shareUrl: text('Link', 'https://lana.global'),
-            shareMessage: text('Message', 'test'),
+            shareMessage: text('Message', 'Checkout my awesome website!'),
             buttonText: text('Button Text', 'Share'),
             className: text('className', 'ib')
         };
