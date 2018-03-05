@@ -48,6 +48,7 @@ shouldCloseOnEscape|false|Whether or not the fallback modal should close when th
 disabled|[]|An array of button names to be disabled
 className|''|Custom classname, you can style your button with this
 [fbAppId](https://developers.facebook.com/docs/apps/register)|''|Required if you are planning on sharing to Facebook
+[fbDisplayType](https://developers.facebook.com/docs/sharing/reference/share-dialog)|'touch'|The type of share window that will be launched to support different devices. E.g. mobile, tablet, or desktop.
 shareUrl|''|The URL you want to share
 shareMessage|''|The Text before the URL (E.g. Hey checkout this awesome thing I'm sharing!!)
 buttonText| Share |The text that will appear for the share button
