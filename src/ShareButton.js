@@ -226,7 +226,7 @@ const shareButton = css({
 });
 
 @autobind
-class Button extends PureComponent {
+class ShareButton extends PureComponent {
     static propTypes = {
         shareUrl: Types.string,
         shareMessage: Types.string,
@@ -323,4 +323,4 @@ class Button extends PureComponent {
     }
 }
 
-export default Button;
+export default ShareButton;

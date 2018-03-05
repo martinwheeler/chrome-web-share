@@ -1,6 +1,26 @@
-const path = require('path');
+const path = require("path");
+const webpack = require("webpack");
+const CleanWebpackPlugin = require("clean-webpack-plugin");
+const ExtractTextPlugin = require("extract-text-webpack-plugin");
+const pkg = require('../package.json');
 
 module.exports = {
+    entry: {
+        index: "./src/index.js",
+        // vendor: Object.keys(pkg.dependencies)
+    },
+    plugins: [
+        new CleanWebpackPlugin(["dist"], {
+            root: path.resolve(__dirname, "../"),
+            verbose: true,
+            dry: false
+        }),
+    ],
+    output: {
+        filename: "[name].js",
+        path: path.resolve(__dirname, "../dist"),
+        publicPath: ""
+    },
     module: {
         rules: [
             {
@@ -21,19 +41,11 @@ module.exports = {
                 }
             },
             {
-                test: /\.(png|jpg|gif)$/,
-                use: ["file-loader"]
-            },
-            {
                 test: /\.svg$/,
                 use: {
                     loader: 'svg-url-loader',
                     options: {}
                 }
-            },
-            {
-                test: /\.(woff|woff2|eot|ttf|otf)$/,
-                use: ["file-loader"]
             }
         ]
     }
