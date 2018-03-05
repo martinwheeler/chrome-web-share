@@ -1,12 +1,14 @@
+import _ from 'lodash';
 import Types from 'prop-types';
 import { autobind } from 'core-decorators';
 import React, { PureComponent } from 'react';
 import Visibility from './visibility';
-import { DEFAULT_FUNCTION, DEFAULT_STRING, KEYCODE_ESCAPE } from './utils';
+import { DEFAULT_FUNCTION, DEFAULT_STRING, KEYCODE_ESCAPE, BUTTON_TYPES } from './utils';
 
 @autobind
 class PopupModal extends PureComponent {
     static propTypes = {
+        disabled: Types.array,
         modelOpen: Types.bool,
         shareUrl: Types.string,
         shareMessage: Types.string,
@@ -16,6 +18,7 @@ class PopupModal extends PureComponent {
     };
 
     static defaultProps = {
+        disabled: [],
         modelOpen: false,
         shareUrl: '',
         shareMessage: '',
@@ -28,6 +31,11 @@ class PopupModal extends PureComponent {
     get messageAndLink() {
         const { shareUrl, shareMessage } = this.props;
         return `${shareMessage} ${shareUrl}`;
+    }
+
+    isShareDisabled (type) {
+        const { disabled } = this.props;
+        return disabled && _.includes(disabled, type);
     }
 
     constructor(props) {
@@ -90,7 +98,6 @@ class PopupModal extends PureComponent {
 
     render() {
         const {
-            disabled,
             shareMessage,
             shareUrl,
             fbAppId,
@@ -105,14 +112,14 @@ class PopupModal extends PureComponent {
             <div className='share-popup'>
                 {this.props.modelOpen && <Visibility ref={this.setVisibilityRef}/>}
 
-                {!disabled.find(button => button === 'whatsApp') &&
-                <a className='sp-tab' href={`whatsapp://send?text=${encodeURIComponent(this.messageAndLink)}`}
-                   onClick={this.handleWhatsAppShare}>
-                    <div className='icon whatsapp'/>
-                    <span className='shareMessage'>WhatsApp</span>
-                </a>
+                {!this.isShareDisabled(BUTTON_TYPES.WHATSAPP) &&
+                    <a className='sp-tab' href={`whatsapp://send?text=${encodeURIComponent(this.messageAndLink)}`}
+                       onClick={this.handleWhatsAppShare}>
+                        <div className='icon whatsapp'/>
+                        <span className='shareMessage'>WhatsApp</span>
+                    </a>
                 }
-                {!disabled.find(button => button === 'facebook') &&
+                {!this.isShareDisabled(BUTTON_TYPES.FACEBOOK) &&
                 <a className='sp-tab'
                    href={facebookLink}
                    onClick={this.handleFacebookShare} target='_blank'>
@@ -120,7 +127,7 @@ class PopupModal extends PureComponent {
                     <span className='shareMessage'>Facebook</span>
                 </a>
                 }
-                {!disabled.find(button => button === 'twitter') &&
+                {!this.isShareDisabled(BUTTON_TYPES.TWITTER) &&
                 <a className='sp-tab'
                    href={twitterLink}
                    onClick={this.handleTwitterShare} target='_blank'>
@@ -128,13 +135,13 @@ class PopupModal extends PureComponent {
                     <span className='shareMessage'>Twitter</span>
                 </a>
                 }
-                {!disabled.find(button => button === 'gmail') &&
+                {!this.isShareDisabled(BUTTON_TYPES.GMAIL) &&
                 <a className='sp-tab' href={gmailLink} onClick={this.handleEmailShare} target='_blank'>
                     <div className='icon gmail'/>
                     <span className='shareMessage'>Mail</span>
                 </a>
                 }
-                {!disabled.find(button => button === 'copy') &&
+                {!this.isShareDisabled(BUTTON_TYPES.COPY) &&
                 <div className='sp-tab copy' onClick={this.handleCopyLink} data-copytarget='#shareUrl'>
                     <div className='copy-input'>
                         <input type='text' id='shareUrl' value={shareUrl} readOnly/>

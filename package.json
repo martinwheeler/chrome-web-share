@@ -1,6 +1,6 @@
 {
   "name": "chrome-web-share",
-  "version": "1.0.0",
+  "version": "2.0.1",
   "description": "A lightweight React Share Button for mobile web with web share api integration, native intent support and fallback",
   "main": "dist/index.js",
   "files": [
@@ -15,7 +15,7 @@
     "test:watch": "mocha --require tests/config/setup 'tests/**/*.test.js' --watch",
     "test:cover": "istanbul cover -x *.test.js _mocha -- -R spec --require tests/config/setup 'tests/**/*.test.js'",
     "test:report": "cat ./coverage/lcov.info | codecov && rm -rf ./coverage",
-    "build": "rm -rf dist && babel src --out-dir dist && npm run build:styles && cp src/social-sprite.png dist/social-sprite.png",
+    "build": "generate-changelog && rm -rf dist && babel src --out-dir dist && npm run build:styles && cp src/social-sprite.png dist/social-sprite.png",
     "build:styles": "node-sass src --output dist",
     "build:watch": "concurrently \"babel --watch src --out-dir dist\" \"node-sass --watch src --output dist\"",
     "docs": "build-storybook -o docs",

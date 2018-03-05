@@ -59,11 +59,17 @@ sharedBy| (medium) => {console.log('shared via ', medium)}|A callback function w
 ### Button Names
 > Used for disabling a button with the `disabled` prop.
 
-- whatsApp
-- facebook
-- twitter
-- gmail
-- copy
+Can also be imported using the included util. E.g.
+
+```javascript
+import { BUTTON_TYPES } from 'chrome-web-share'
+```
+
+- WhatsApp
+- Facebook
+- Twitter
+- Gmail
+- Copy
 
 ### Development
 ```
