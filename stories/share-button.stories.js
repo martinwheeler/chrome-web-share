@@ -13,7 +13,7 @@ stories.addDecorator(withKnobs);
 stories
     .add('default', () => {
         const knobProps = {
-            disabled: array('disabled', [ 'whatsApp', 'facebook' ]),
+            disabled: array('disabled', []),
             fbAppId: text('FB App ID', ''),
             shareUrl: text('Link', 'https://lana.global'),
             shareMessage: text('Message', 'test'),

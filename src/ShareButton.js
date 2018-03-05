@@ -2,33 +2,38 @@ import Types from 'prop-types';
 import { autobind } from 'core-decorators';
 import React, { PureComponent } from 'react';
 import Visibility from './visibility';
-import { DEFAULT_FUNCTION, DEFAULT_STRING, KEYCODE_ESCAPE} from './utils';
+import { DEFAULT_FUNCTION, DEFAULT_STRING, KEYCODE_ESCAPE } from './utils';
 
 @autobind
 class PopupModal extends PureComponent {
     static propTypes = {
         modelOpen: Types.bool,
         shareUrl: Types.string,
-        onCopySuccess: Types.func,
         shareMessage: Types.string,
         fbAppId: Types.string,
-        fbDisplayType: Types.string
+        fbDisplayType: Types.string,
+        onCopySuccess: Types.func
     };
 
     static defaultProps = {
+        modelOpen: false,
         shareUrl: '',
         shareMessage: '',
-        modelOpen: false,
         fbAppId: '',
         fbDisplayType: 'touch',
         onCopySuccess: () => {}
     };
 
+    get messageAndLink() {
+        const { shareUrl, shareMessage } = this.props;
+        return `${shareMessage} ${shareUrl}`;
+    }
+
     constructor(props) {
         super(props);
     }
 
-    copyClicked(e) {
+    handleCopyLink(e) {
         const { onCopySuccess } = this.props;
         const copyTarget = document.querySelector(e.currentTarget.dataset.copytarget || null);
 
@@ -46,72 +51,92 @@ class PopupModal extends PureComponent {
         }
     }
 
+    /**
+     * Helper function to open the App Store if the share does not trigger WhatsApp to launch.
+     */
     whatsappClicked() {
-        const userAgent = navigator.userAgent || navigator.vendor || window.opera
-        let link = '';
-        if (/android/i.test(userAgent)) {
-            link = 'https://play.google.com/store/apps/details?id=com.whatsapp'
-        } else if (/iPad|iPhone|iPod/.test(userAgent) && !window.MSStream) {
-            link = 'https://itunes.apple.com/app/id310633997'
-        }
+        const userAgent = navigator.userAgent || navigator.vendor || window.opera;
         const delay = 1000;
         const start = new Date().getTime();
+
+        let link = /android/i.test(userAgent)
+            ? 'https://play.google.com/store/apps/details?id=com.whatsapp'
+            : /iPad|iPhone|iPod/i.test(userAgent)
+                ? 'https://itunes.apple.com/app/id310633997'
+                : '';
+
+        // Checks to see if whatsapp share launched otherwise lets show the user a donwload link for whatsapp
         setTimeout(() => {
-            let end = new Date().getTime();
-            if ((this.visibility && this.visibility.isHidden()) || (end - start >= delay * 2)) return;
-            window.open(link, '_blank');
-        }, delay)
+            if (link) {
+                let end = new Date().getTime();
+                if ((this.visibility && this.visibility.isHidden()) || (end - start >= delay * 2)) return;
+
+                window.open(link, '_blank');
+            }
+        }, delay);
     }
 
-    fbClicked() {
+    handleFacebookShare() {
     }
 
-    twitterClicked() {
+    handleTwitterShare() {
     }
 
-    gmailClicked() {
+    handleEmailShare() {
+    }
+
+    setVisibilityRef(node) {
+        this.visibility = node;
     }
 
     render() {
-        const { disabled, shareMessage, shareUrl, fbAppId, fbDisplayType } = this.props;
-        const formattedMessage = this.props.shareMessage + ' ' + this.props.shareUrl;
-        const gmailURL = `https://mail.google.com/mail/u/0/?view=cm&ui=2&tf=0&fs=1&su=${shareMessage}&body=${shareUrl}`;
+        const {
+            disabled,
+            shareMessage,
+            shareUrl,
+            fbAppId,
+            fbDisplayType
+        } = this.props;
+
+        const gmailLink = `https://mail.google.com/mail/u/0/?view=cm&ui=2&tf=0&fs=1&su=${shareMessage}&body=${shareUrl}`;
+        const twitterLink = `https://twitter.com/intent/tweet?text=${encodeURIComponent(shareMessage)}&url=${encodeURIComponent(shareUrl)}`;
+        const facebookLink = `https://www.facebook.com/dialog/share?app_id=${fbAppId}&display=${fbDisplayType}&href=${encodeURIComponent(shareUrl)}`;
 
         return (
             <div className='share-popup'>
-                {this.props.modelOpen && <Visibility ref={(node) => {
-                    this.visibility = node
-                }}/>}
+                {this.props.modelOpen && <Visibility ref={this.setVisibilityRef}/>}
+
                 {!disabled.find(button => button === 'whatsApp') &&
-                <a className='sp-tab' href={`whatsapp://send?shareMessage=${formattedMessage}`} onClick={this.whatsappClicked}>
+                <a className='sp-tab' href={`whatsapp://send?shareMessage=${this.messageAndLink}`}
+                   onClick={this.handleWhatsAppShare}>
                     <div className='icon whatsapp'/>
                     <span className='shareMessage'>WhatsApp</span>
                 </a>
                 }
                 {!disabled.find(button => button === 'facebook') &&
                 <a className='sp-tab'
-                   href={`https://www.facebook.com/dialog/share?app_id=${fbAppId}&display=${fbDisplayType}&href=${encodeURIComponent(shareUrl)}`}
-                   onClick={this.fbClicked} target='_blank'>
+                   href={facebookLink}
+                   onClick={this.handleFacebookShare} target='_blank'>
                     <div className='icon fb'/>
                     <span className='shareMessage'>Facebook</span>
                 </a>
                 }
                 {!disabled.find(button => button === 'twitter') &&
                 <a className='sp-tab'
-                   href={`https://twitter.com/intent/tweet?text=${encodeURIComponent(shareMessage)}&url=${encodeURIComponent(shareUrl)}`}
-                   onClick={this.twitterClicked} target='_blank'>
+                   href={twitterLink}
+                   onClick={this.handleTwitterShare} target='_blank'>
                     <div className='icon twitter'/>
                     <span className='shareMessage'>Twitter</span>
                 </a>
                 }
                 {!disabled.find(button => button === 'gmail') &&
-                <a className='sp-tab' href={gmailURL} onClick={this.gmailClicked} target='_blank'>
+                <a className='sp-tab' href={gmailLink} onClick={this.handleEmailShare} target='_blank'>
                     <div className='icon gmail'/>
                     <span className='shareMessage'>Mail</span>
                 </a>
                 }
                 {!disabled.find(button => button === 'copy') &&
-                <div className='sp-tab copy' onClick={this.copyClicked} data-copytarget='#shareUrl'>
+                <div className='sp-tab copy' onClick={this.handleCopyLink} data-copytarget='#shareUrl'>
                     <div className='copy-input'>
                         <input type='text' id='shareUrl' defaultValue={shareUrl} readOnly/>
                     </div>
