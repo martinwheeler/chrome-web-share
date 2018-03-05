@@ -1,3 +1,4 @@
+// @flow
 import Types from 'prop-types';
 import { autobind } from 'core-decorators';
 import React, { PureComponent } from 'react';
@@ -5,7 +6,7 @@ import Visibility from './visibility';
 import { DEFAULT_FUNCTION, DEFAULT_STRING, KEYCODE_ESCAPE} from './utils';
 
 @autobind
-class PopupModal extends PureComponent {
+class PopupModal extends PureComponent<Types> {
     static propTypes = {
         modelOpen: Types.bool,
         shareUrl: Types.string,

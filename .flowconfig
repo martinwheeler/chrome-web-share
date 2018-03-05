@@ -1,0 +1,13 @@
+[ignore]
+.*/react/node_modules/.*
+
+[include]
+
+[libs]
+
+[lints]
+
+[options]
+esproposal.decorators=ignore
+
+[strict]
