@@ -11,5 +11,6 @@ export const BUTTON_TYPES = {
     TWITTER: 'Twitter',
     WHATSAPP: 'WhatsApp',
     GMAIL: 'Gmail',
+    EMAIL: 'Email',
     COPY: 'Copy'
-}
+};

@@ -14,18 +14,23 @@ class PopupModal extends PureComponent {
         shareMessage: Types.string,
         fbAppId: Types.string,
         fbDisplayType: Types.string,
-        onCopySuccess: Types.func
+        onCopySuccess: Types.func,
+        emailAddress: Types.string,
+        copyText: Types.string
     };
 
     static defaultProps = {
-        disabled: [],
+        disabled: [
+            BUTTON_TYPES.EMAIL
+        ],
         modelOpen: false,
         shareUrl: '',
         shareMessage: '',
         fbAppId: '',
         fbDisplayType: 'touch',
         onCopySuccess: () => {
-        }
+        },
+        copyText: 'Copy to clipboard'
     };
 
     get messageAndLink() {
@@ -101,10 +106,13 @@ class PopupModal extends PureComponent {
             shareMessage,
             shareUrl,
             fbAppId,
-            fbDisplayType
+            fbDisplayType,
+            emailAddress,
+            copyText
         } = this.props;
 
         const gmailLink = `https://mail.google.com/mail/u/0/?view=cm&ui=2&tf=0&fs=1&su=${shareMessage}&body=${shareUrl}`;
+        const emailLink = `mailto:${emailAddress}?body=${shareMessage}`;
         const twitterLink = `https://twitter.com/intent/tweet?text=${encodeURIComponent(shareMessage)}&url=${encodeURIComponent(shareUrl)}`;
         const facebookLink = `https://www.facebook.com/dialog/share?app_id=${fbAppId}&display=${fbDisplayType}&href=${encodeURIComponent(shareUrl)}`;
 
@@ -141,6 +149,12 @@ class PopupModal extends PureComponent {
                     <span className='shareMessage'>Mail</span>
                 </a>
                 }
+                {!this.isShareDisabled(BUTTON_TYPES.EMAIL) && emailAddress &&
+                <a className='sp-tab' href={emailLink}>
+                    <div className='icon gmail'/>
+                    <span className='shareMessage'>E-Mail</span>
+                </a>
+                }
                 {!this.isShareDisabled(BUTTON_TYPES.COPY) &&
                 <div className='sp-tab copy' onClick={this.handleCopyLink} data-copytarget='#shareUrl'>
                     <div className='copy-input'>
@@ -148,7 +162,7 @@ class PopupModal extends PureComponent {
                     </div>
                     <div className='copy-button'>
                         <div className='icon copy'/>
-                        <span className='shareMessage'>Copy to clipboard</span>
+                        <span className='shareMessage'>{copyText}</span>
                     </div>
                 </div>
                 }
@@ -165,7 +179,7 @@ class Button extends PureComponent {
         buttonText: Types.string,
         onButtonClick: Types.func,
         onCopySuccess: Types.func,
-        fbAppId: Types.string.isRequired
+        fbAppId: Types.string
     };
 
     static defaultProps = {
@@ -192,14 +206,14 @@ class Button extends PureComponent {
     }
 
     toggleShare() {
-        const { onButtonClick, shareMessage, shareUrl } = this.props;
+        const { onButtonClick, shareMessage, shareUrl, disableWebShareAPI } = this.props;
         const { modelOpen } = this.state;
 
         if (!modelOpen && onButtonClick) {
             onButtonClick();
         }
 
-        if (navigator && !!navigator.share) {
+        if (navigator && !!navigator.share && !disableWebShareAPI) {
             navigator.share({
                 title: shareMessage,
                 text: shareMessage + shareUrl,
@@ -214,7 +228,7 @@ class Button extends PureComponent {
     }
 
     render() {
-        const { className, buttonText, shouldCloseOnEscape, disabled, shareUrl, shareMessage, onCopySuccess, fbAppId } = this.props;
+        const { className, buttonText, shouldCloseOnEscape, disabled, shareUrl, shareMessage, onCopySuccess, fbAppId, emailAddress, copyText } = this.props;
         const { modelOpen } = this.state;
 
         const popupProps = {
@@ -222,7 +236,9 @@ class Button extends PureComponent {
             shareUrl,
             shareMessage,
             onCopySuccess,
-            fbAppId
+            fbAppId,
+            emailAddress,
+            copyText
         };
 
         return (
