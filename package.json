@@ -1,6 +1,6 @@
 {
   "name": "chrome-web-share",
-  "version": "2.0.7",
+  "version": "2.0.8",
   "description": "A lightweight React Share Button for mobile web with web share api integration, native intent support and fallback",
   "main": "dist/index.js",
   "files": [
